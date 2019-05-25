@@ -1,0 +1,24 @@
+extends: standard
+env:
+  es6: true
+  node: true
+  jest: true
+
+plugins:
+  - jsdoc
+
+rules:
+  camelcase: error
+  quotes:
+    - error
+    - backtick
+  max-depth: warn
+  prefer-const: error
+  no-shadow: error
+  jsdoc/check-alignment: error
+  jsdoc/check-indentation: error
+  jsdoc/check-param-names: error
+  jsdoc/check-syntax: error
+  jsdoc/check-tag-names: error
+  jsdoc/check-types: error
+  jsdoc/newline-after-description: error
