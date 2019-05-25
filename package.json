@@ -1,5 +1,5 @@
 {
-  "name": "umpire-client",
+  "name": "@mgonnet/umpire-client",
   "version": "0.0.0",
   "description": "umpire client for JS",
   "main": "index.js",
