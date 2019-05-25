@@ -1,6 +1,8 @@
 const Umpire = require(`@mgonnet/umpire`).Umpire
 const Chess = require(`chess.js`).Chess
 const UmpireClient = require(`../../src/UmpireClient`).UmpireClient
+const WebSocket = require(`ws`)
+
 const PORT = 3000
 const URL = `ws://localhost:${PORT}`
 
@@ -11,7 +13,7 @@ describe(`Registration`, function () {
   beforeEach(async function () {
     server = Umpire({ port: PORT, game: Chess })
     await server.start()
-    client = UmpireClient({ url: URL })
+    client = UmpireClient({ url: URL, WSConstructor: WebSocket })
   })
 
   it(`should allow to register a user`, async function () {

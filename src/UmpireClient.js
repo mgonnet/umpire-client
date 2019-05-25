@@ -1,17 +1,17 @@
 /**
  * @typedef UmpireClientOptions
  * @property {string} url
+ * @property {*} WSConstructor
  */
 
 const Listener = require(`./Listener`)
-const WebSocket = require(`ws`)
 const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
 
 /**
  *
  * @param {UmpireClientOptions} options
  */
-const UmpireClientFactory = ({ url }) => {
+const UmpireClientFactory = ({ url, WSConstructor }) => {
   /** @type {WebSocket} */
   let ws
   let listener
@@ -24,11 +24,11 @@ const UmpireClientFactory = ({ url }) => {
      */
     async register (name) {
       return new Promise(function (resolve, reject) {
-        ws = new WebSocket(url)
+        ws = new WSConstructor(url)
 
-        ws.on(`open`, function connected () {
+        ws.onopen = function connected () {
           ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
-        })
+        }
 
         // @ts-ignore
         listener = new Listener({ ws })
