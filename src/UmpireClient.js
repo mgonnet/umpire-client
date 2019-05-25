@@ -3,6 +3,7 @@
  * @property {string} url
  */
 
+const Listener = require(`./Listener`)
 const WebSocket = require(`ws`)
 const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
 
@@ -11,7 +12,9 @@ const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
  * @param {UmpireClientOptions} options
  */
 const UmpireClientFactory = ({ url }) => {
+  /** @type {WebSocket} */
   let ws
+  let listener
 
   return {
     /**
@@ -27,13 +30,16 @@ const UmpireClientFactory = ({ url }) => {
           ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
         })
 
-        ws.on(`message`, (message) => {          
-          const [type, data] = JSON.parse(String(message))
-          if (type === `${MessageTypes.REGISTER}-ACCEPTED`) {
-            resolve(`OK`)
-          } else if (type === `${MessageTypes.REGISTER}-REJECTED`) {
-            reject(data)
-          }
+        // @ts-ignore
+        listener = new Listener({ ws })
+        listener.listen()
+
+        listener.on(`REGISTER-ACCEPTED`, () => {
+          resolve(`OK`)
+        })
+
+        listener.on(`REGISTER-REJECTED`, () => {
+          // reject()
         })
       })
     }
