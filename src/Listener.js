@@ -25,6 +25,10 @@ module.exports = class UmpireListener extends EventEmitter {
         this.emit(`REGISTER-ACCEPTED`)
       } else if (type === `${MessageTypes.REGISTER}-REJECTED`) {
         this.emit(`REGISTER-REJECTED`, data.reason)
+      } else if (type === `${MessageTypes.CREATE_LOBBY}-ACCEPTED`) {
+        this.emit(`CREATE-LOBBY-ACCEPTED`)
+      } else if (type === `${MessageTypes.CREATE_LOBBY}-REJECTED`) {
+        this.emit(`${MessageTypes.CREATE_LOBBY}-REJECTED`, data.reason)
       }
     }
   }

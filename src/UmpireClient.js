@@ -42,6 +42,22 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           reject(reason)
         })
       })
+    },
+
+    /**
+     *
+     * @param {string} name
+     */
+    async createLobby (name) {
+      return new Promise(function (resolve, reject) {
+        ws.send(JSON.stringify([MessageTypes.CREATE_LOBBY, { name }]))
+        listener.on(`CREATE-LOBBY-ACCEPTED`, () => {
+          resolve(`OK`)
+        })
+        listener.on(`CREATE-LOBBY-REJECTED`, (reason) => {
+          reject(reason)
+        })
+      })
     }
   }
 }
