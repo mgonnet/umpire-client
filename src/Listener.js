@@ -19,12 +19,12 @@ module.exports = class UmpireListener extends EventEmitter {
 
   listen () {
     this.ws.onmessage = (message) => {
-      const [type] = JSON.parse(String(message.data))
+      const [type, data] = JSON.parse(String(message.data))
 
       if (type === `${MessageTypes.REGISTER}-ACCEPTED`) {
         this.emit(`REGISTER-ACCEPTED`)
       } else if (type === `${MessageTypes.REGISTER}-REJECTED`) {
-        this.emit(`REGISTER-REJECTED`)
+        this.emit(`REGISTER-REJECTED`, data.reason)
       }
     }
   }

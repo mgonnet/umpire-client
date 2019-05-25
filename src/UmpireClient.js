@@ -38,8 +38,8 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           resolve(`OK`)
         })
 
-        listener.on(`REGISTER-REJECTED`, () => {
-          // reject()
+        listener.on(`REGISTER-REJECTED`, (reason) => {
+          reject(reason)
         })
       })
     }
