@@ -40,4 +40,17 @@ describe(`Registration`, function () {
     }
     expect(secondResult).toBe(`User already in lobby`)
   })
+
+  it(`should allow to join a lobby and show the players inside`, async function () {
+    await client.createLobby(`myLobby`)
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    await otherClient.register(`rataplan`)
+
+    const result = await otherClient.joinLobby(`myLobby`)
+
+    const resultString = JSON.stringify(result)
+    const expectedPlayers = `[{"name":"useloom"},{"name":"rataplan"}]`
+
+    expect(resultString).toBe(expectedPlayers)
+  })
 })

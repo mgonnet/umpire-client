@@ -58,6 +58,15 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           reject(reason)
         })
       })
+    },
+
+    async joinLobby (name) {
+      return new Promise(function (resolve, reject) {
+        ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
+        listener.on(`${MessageTypes.JOIN_LOBBY}-ACCEPTED`, (players) => {
+          resolve(players)
+        })
+      })
     }
   }
 }
