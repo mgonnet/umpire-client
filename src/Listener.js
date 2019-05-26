@@ -30,6 +30,9 @@ module.exports = class UmpireListener extends EventEmitter {
         this.emit(`${MessageTypes.CREATE_LOBBY}-REJECTED`, data.reason)
       } else if (type === `${MessageTypes.JOIN_LOBBY}-ACCEPTED`) {
         this.emit(`${MessageTypes.JOIN_LOBBY}-ACCEPTED`, data.players)
+      } else if (type === `JOINED-LOBBY`) {
+        console.log(data, `lalala`)
+        this.emit(`JOINED-LOBBY`, data.player)
       }
     }
   }

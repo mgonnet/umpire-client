@@ -53,4 +53,20 @@ describe(`Registration`, function () {
 
     expect(resultString).toBe(expectedPlayers)
   })
+
+  it(`should execute the function setted on onJoinedLobby`, async function () {
+    const eventCalled = new Promise(function (resolve, reject) {
+      client.onJoinedLobby = (player) => {
+        expect(player).toBe(`rataplan`)
+        resolve()
+      }
+    })
+
+    await client.createLobby(`myLobby`)
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    await otherClient.register(`rataplan`)
+    await otherClient.joinLobby(`myLobby`)
+
+    await eventCalled
+  })
 })

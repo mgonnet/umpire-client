@@ -67,6 +67,38 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           resolve(players)
         })
       })
+    },
+
+    /**
+     * Return the listener of the event.
+     *
+     * @returns {(Function|undefined)} The event listener or `undefined`
+     * @public
+     */
+    get onJoinedLobby () {
+      const listeners = listener.listeners(`JOINED-LOBBY`)
+      for (let i = 0; i < listeners.length; i++) {
+        if (listeners[i]._listener) return listeners[i]._listener
+      }
+
+      return undefined
+    },
+
+    /**
+     * Add a listener for the event joined lobby event.
+     *
+     * @param {Function} customListener The listener to add
+     * @public
+     */
+    set onJoinedLobby (customListener) {
+      const listeners = listener.listeners(`JOINED-LOBBY`)
+      for (let i = 0; i < listeners.length; i++) {
+        //
+        // Remove only the listeners added via `addEventListener`.
+        //
+        if (listeners[i]._listener) listener.removeListener(`JOINED-LOBBY`, listeners[i])
+      }
+      listener.addListener(`JOINED-LOBBY`, customListener)
     }
   }
 }
