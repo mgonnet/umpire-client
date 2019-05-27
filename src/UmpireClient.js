@@ -4,14 +4,14 @@
  * @property {*} WSConstructor
  */
 
-const Listener = require(`./Listener`)
-const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
-
 /**
  *
  * @param {UmpireClientOptions} options
  */
 const UmpireClientFactory = ({ url, WSConstructor }) => {
+  const Listener = require(`./Listener`)
+  const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
+
   /** @type {WebSocket} */
   let ws
   let listener
