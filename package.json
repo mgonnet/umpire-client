@@ -1,7 +1,7 @@
 {
   "name": "@mgonnet/umpire-client",
   "description": "umpire client for JS",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "./src/UmpireClient",
   "scripts": {
     "lint": "esw \"**/*.js\"",
@@ -42,7 +42,7 @@
     "promise-matchers": "^0.9.6"
   },
   "dependencies": {
-    "@mgonnet/umpire": "^0.4.7",
+    "@mgonnet/umpire": "^0.4.8",
     "promise-matchers": "^0.9.6",
     "ws": "^7.0.0"
   }

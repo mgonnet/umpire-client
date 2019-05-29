@@ -1,6 +1,6 @@
-const Umpire = require(`@mgonnet/umpire`).Umpire
+const Umpire = require(`@mgonnet/umpire`)
 const Chess = require(`chess.js`).Chess
-const UmpireClient = require(`../../src/UmpireClient`).UmpireClient
+const UmpireClient = require(`../../src/UmpireClient`)
 const WebSocket = require(`ws`)
 
 const PORT = 3000

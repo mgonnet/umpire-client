@@ -9,7 +9,7 @@
  * @param {UmpireClientOptions} options
  */
 const UmpireClientFactory = ({ url, WSConstructor }) => {
-  const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
+  const MessageTypes = require(`@mgonnet/umpire/src/entities/MessageTypes`)
 
   function parseMessage (message) {
     const [type, payload] = JSON.parse(message)
@@ -115,6 +115,4 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
   }
 }
 
-module.exports = {
-  UmpireClient: UmpireClientFactory
-}
+module.exports = UmpireClientFactory
