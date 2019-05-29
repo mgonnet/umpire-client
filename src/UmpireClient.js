@@ -50,14 +50,12 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
 
     /**
      * The name of the current player
-     *
      * @returns {string}
      */
     get user () { return user },
 
     /**
-     * The name of the lobby the player is currently in
-     *
+     * The name of the lobby the player is currently in  
      * @returns {string}
      */
     get lobby () { return lobby },
@@ -105,6 +103,7 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
     },
 
     /**
+     * Executes callback each time that the event is fired
      *
      * @param {"JOINED-LOBBY"} event
      * @param {Function} callback
@@ -116,38 +115,6 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           callback(payload)
         }
       })
-    },
-
-    /**
-     * Return the listener of the event.
-     *
-     * @returns {(Function|undefined)} The event listener or `undefined`
-     * @public
-     */
-    get onJoinedLobby () {
-      const listeners = listener.listeners(`JOINED-LOBBY`)
-      for (let i = 0; i < listeners.length; i++) {
-        if (listeners[i]._listener) return listeners[i]._listener
-      }
-
-      return undefined
-    },
-
-    /**
-     * Add a listener for the event joined lobby event.
-     *
-     * @param {Function} customListener The listener to add
-     * @public
-     */
-    set onJoinedLobby (customListener) {
-      const listeners = listener.listeners(`JOINED-LOBBY`)
-      for (let i = 0; i < listeners.length; i++) {
-        //
-        // Remove only the listeners added via `addEventListener`.
-        //
-        if (listeners[i]._listener) listener.removeListener(`JOINED-LOBBY`, listeners[i])
-      }
-      listener.addListener(`JOINED-LOBBY`, customListener)
     }
   }
 }
