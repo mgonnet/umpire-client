@@ -56,10 +56,10 @@ describe(`Registration`, function () {
 
   it(`should execute the function setted on onJoinedLobby`, async function () {
     const eventCalled = new Promise(function (resolve, reject) {
-      client.onJoinedLobby = (player) => {
+      client.addListener(`JOINED-LOBBY`, ({ player }) => {
         expect(player).toBe(`rataplan`)
         resolve()
-      }
+      })
     })
 
     await client.createLobby(`myLobby`)

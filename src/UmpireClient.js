@@ -13,8 +13,8 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
   const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
 
   function parseMessage (message) {
-    const [type, data] = JSON.parse(message)
-    return { type, data }
+    const [type, payload] = JSON.parse(message)
+    return { type, payload }
   }
 
   /**
@@ -28,10 +28,10 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
         const parsed = parseMessage(data)
         if (parsed.type === `${messageType}-ACCEPTED`) {
           ws.removeEventListener(`message`, listener)
-          resolve(parsed.data)
+          resolve(parsed.payload)
         } else if (parsed.type === `${messageType}-REJECTED`) {
           ws.removeEventListener(`message`, listener)
-          reject(parsed.data.reason)
+          reject(parsed.payload.reason)
         }
       }
 
@@ -101,6 +101,20 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
       return onresponse(ws, MessageTypes.JOIN_LOBBY).then(({ players }) => {
         lobby = name
         return players
+      })
+    },
+
+    /**
+     *
+     * @param {"JOINED-LOBBY"} event
+     * @param {Function} callback
+     */
+    addListener (event, callback) {
+      ws.addEventListener(`message`, ({ data }) => {
+        const { type, payload } = parseMessage(data)
+        if (event === type) {
+          callback(payload)
+        }
       })
     },
 
