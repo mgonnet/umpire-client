@@ -9,7 +9,6 @@
  * @param {UmpireClientOptions} options
  */
 const UmpireClientFactory = ({ url, WSConstructor }) => {
-  const Listener = require(`./Listener`)
   const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
 
   function parseMessage (message) {
@@ -41,7 +40,6 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
 
   /** @type {WebSocket} */
   let ws
-  let listener
 
   let user
   let lobby
@@ -50,12 +48,14 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
 
     /**
      * The name of the current player
+     *
      * @returns {string}
      */
     get user () { return user },
 
     /**
-     * The name of the lobby the player is currently in  
+     * The name of the lobby the player is currently in
+     *
      * @returns {string}
      */
     get lobby () { return lobby },
@@ -71,10 +71,6 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
       ws.onopen = function connected () {
         ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
       }
-
-      // @ts-ignore
-      listener = new Listener({ ws })
-      listener.listen()
 
       return onresponse(ws, MessageTypes.REGISTER).then(() => {
         user = name
@@ -94,7 +90,7 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
       })
     },
 
-    async joinLobby (name) {
+    joinLobby (name) {
       ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
       return onresponse(ws, MessageTypes.JOIN_LOBBY).then(({ players }) => {
         lobby = name
