@@ -17,39 +17,70 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
     return { type, data }
   }
 
+  /**
+   *
+   * @param {WebSocket} ws
+   * @param {string} messageType
+   */
+  function onresponse (ws, messageType) {
+    return new Promise(function (resolve, reject) {
+      function listener ({ data }) {
+        const parsed = parseMessage(data)
+        if (parsed.type === `${messageType}-ACCEPTED`) {
+          ws.removeEventListener(`message`, listener)
+          resolve(parsed.data)
+        } else if (parsed.type === `${messageType}-REJECTED`) {
+          ws.removeEventListener(`message`, listener)
+          reject(parsed.data.reason)
+        }
+      }
+
+      ws.addEventListener(`message`, listener)
+    })
+  }
+
   /** @type {WebSocket} */
   let ws
   let listener
 
+  let user
+  let lobby
+
   return {
+
+    /**
+     * The name of the current player
+     *
+     * @returns {string}
+     */
+    get user () { return user },
+
+    /**
+     * The name of the lobby the player is currently in
+     *
+     * @returns {string}
+     */
+    get lobby () { return lobby },
+
     /**
      *
      * @param {string} name
-     * @returns {Promise<'OK'>}
+     * @returns {Promise<string>}
      */
-    async register (name) {
-      return new Promise(function (resolve, reject) {
-        ws = new WSConstructor(url)
+    register (name) {
+      ws = new WSConstructor(url)
 
-        ws.onopen = function connected () {
-          ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
-        }
+      ws.onopen = function connected () {
+        ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
+      }
 
-        function onresponse ({ data }) {
-          const parsed = parseMessage(data)
-          if (parsed.type === `${MessageTypes.REGISTER}-ACCEPTED`) {
-            ws.removeEventListener(`message`, onresponse)
-            resolve(`OK`)
-          } else if (parsed.type === `${MessageTypes.REGISTER}-REJECTED`) {
-            ws.removeEventListener(`message`, onresponse)
-            reject(parsed.data.reason)
-          }
-        }
+      // @ts-ignore
+      listener = new Listener({ ws })
+      listener.listen()
 
-        ws.addEventListener(`message`, onresponse)
-        // @ts-ignore
-        listener = new Listener({ ws })
-        listener.listen()
+      return onresponse(ws, MessageTypes.REGISTER).then(() => {
+        user = name
+        return `OK`
       })
     },
 
@@ -57,24 +88,19 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
      *
      * @param {string} name
      */
-    async createLobby (name) {
-      return new Promise(function (resolve, reject) {
-        ws.send(JSON.stringify([MessageTypes.CREATE_LOBBY, { name }]))
-        listener.on(`CREATE-LOBBY-ACCEPTED`, () => {
-          resolve(`OK`)
-        })
-        listener.on(`CREATE-LOBBY-REJECTED`, (reason) => {
-          reject(reason)
-        })
+    createLobby (name) {
+      ws.send(JSON.stringify([MessageTypes.CREATE_LOBBY, { name }]))
+      return onresponse(ws, MessageTypes.CREATE_LOBBY).then(() => {
+        lobby = name
+        return `OK`
       })
     },
 
     async joinLobby (name) {
-      return new Promise(function (resolve, reject) {
-        ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
-        listener.on(`${MessageTypes.JOIN_LOBBY}-ACCEPTED`, (players) => {
-          resolve(players)
-        })
+      ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
+      return onresponse(ws, MessageTypes.JOIN_LOBBY).then(({ players }) => {
+        lobby = name
+        return players
       })
     },
 
