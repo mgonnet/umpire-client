@@ -12,6 +12,11 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
   const Listener = require(`./Listener`)
   const MessageTypes = require(`@mgonnet/umpire`).MessageTypes
 
+  function parseMessage (message) {
+    const [type, data] = JSON.parse(message)
+    return { type, data }
+  }
+
   /** @type {WebSocket} */
   let ws
   let listener
@@ -30,17 +35,21 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
           ws.send(JSON.stringify([MessageTypes.REGISTER, { name }]))
         }
 
+        function onresponse ({ data }) {
+          const parsed = parseMessage(data)
+          if (parsed.type === `${MessageTypes.REGISTER}-ACCEPTED`) {
+            ws.removeEventListener(`message`, onresponse)
+            resolve(`OK`)
+          } else if (parsed.type === `${MessageTypes.REGISTER}-REJECTED`) {
+            ws.removeEventListener(`message`, onresponse)
+            reject(parsed.data.reason)
+          }
+        }
+
+        ws.addEventListener(`message`, onresponse)
         // @ts-ignore
         listener = new Listener({ ws })
         listener.listen()
-
-        listener.on(`REGISTER-ACCEPTED`, () => {
-          resolve(`OK`)
-        })
-
-        listener.on(`REGISTER-REJECTED`, (reason) => {
-          reject(reason)
-        })
       })
     },
 
