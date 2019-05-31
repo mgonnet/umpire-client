@@ -41,8 +41,10 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
   /** @type {WebSocket} */
   let ws
 
-  let user
-  let lobby
+  let userName
+  let lobbyName
+
+  // let lobbyInfo
 
   return {
 
@@ -51,14 +53,14 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
      *
      * @returns {string}
      */
-    get user () { return user },
+    get user () { return userName },
 
     /**
      * The name of the lobby the player is currently in
      *
      * @returns {string}
      */
-    get lobby () { return lobby },
+    get lobby () { return lobbyName },
 
     /**
      *
@@ -73,7 +75,7 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
       }
 
       return onresponse(ws, MessageTypes.REGISTER).then(() => {
-        user = name
+        userName = name
         return `OK`
       })
     },
@@ -84,16 +86,17 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
      */
     createLobby (name) {
       ws.send(JSON.stringify([MessageTypes.CREATE_LOBBY, { name }]))
-      return onresponse(ws, MessageTypes.CREATE_LOBBY).then(() => {
-        lobby = name
-        return `OK`
+      return onresponse(ws, MessageTypes.CREATE_LOBBY).then(({ players }) => {
+        lobbyName = name
+        // lobbyInfo = players
+        return players
       })
     },
 
     joinLobby (name) {
       ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
       return onresponse(ws, MessageTypes.JOIN_LOBBY).then(({ players }) => {
-        lobby = name
+        lobbyName = name
         return players
       })
     },

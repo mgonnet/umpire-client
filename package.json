@@ -42,7 +42,7 @@
     "promise-matchers": "^0.9.6"
   },
   "dependencies": {
-    "@mgonnet/umpire": "^0.4.8",
+    "@mgonnet/umpire": "^0.4.9",
     "promise-matchers": "^0.9.6",
     "ws": "^7.0.0"
   }

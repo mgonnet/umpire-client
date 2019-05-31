@@ -25,12 +25,12 @@ describe(`Registration`, function () {
   it(`should allow to create a lobby`, async function () {
     const result = await client.createLobby(`myLobby`)
 
-    expect(result).toBe(`OK`)
+    expect(result).toEqual([{ name: `useloom` }])
   })
 
   it(`should reject with a reason when the server rejects a lobby creation`, async function () {
     const result = await client.createLobby(`myLobby`)
-    expect(result).toBe(`OK`)
+    expect(result).toEqual([{ name: `useloom` }])
 
     let secondResult
     try {
