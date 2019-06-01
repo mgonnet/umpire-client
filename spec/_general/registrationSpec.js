@@ -14,7 +14,7 @@ describe(`Registration`, function () {
     spyOn(console, `log`)
     server = Umpire({ port: PORT, game: Chess })
     await server.start()
-    client = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    client = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
   })
 
   afterEach(async function () {

@@ -2,13 +2,14 @@
  * @typedef UmpireClientOptions
  * @property {string} url
  * @property {*} WSConstructor
+ * @property {*} Game
  */
 
 /**
  *
  * @param {UmpireClientOptions} options
  */
-const UmpireClientFactory = ({ url, WSConstructor }) => {
+const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
   const MessageTypes = require(`@mgonnet/umpire/src/entities/MessageTypes`)
 
   function parseMessage (message) {
@@ -80,9 +81,12 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
 
   /** @type {WebSocket} */
   let ws
-
+  /** @type {string} */
   let userName
+  /** @type {string} */
   let lobbyName
+
+  let game
 
   let lobbyInfo = { }
 
@@ -149,6 +153,16 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
       return onresponse(ws, MessageTypes.CHOOSE_ROL).then(({ name, rol }) => {
         const playerInfo = lobbyInfo.players.find((player) => player.name === name)
         playerInfo.rol = rol
+        return lobbyInfo
+      })
+    },
+
+    startGame () {
+      ws.send(JSON.stringify([MessageTypes.START_GAME]))
+      return onresponse(ws, MessageTypes.START_GAME).then((serversInfo) => {
+        // I should validate here that my info is the same that the info in the server
+        game = new Game()
+        console.log(game)
         return lobbyInfo
       })
     },

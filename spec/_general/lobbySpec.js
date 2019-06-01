@@ -14,7 +14,7 @@ describe(`Registration`, function () {
     spyOn(console, `log`)
     server = Umpire({ port: PORT, game: Chess })
     await server.start()
-    client = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    client = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
     await client.register(`useloom`)
   })
 
@@ -43,7 +43,7 @@ describe(`Registration`, function () {
 
   it(`should allow to join a lobby and show the players inside`, async function () {
     await client.createLobby(`myLobby`)
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
     await otherClient.register(`rataplan`)
 
     const result = await otherClient.joinLobby(`myLobby`)
@@ -63,7 +63,7 @@ describe(`Registration`, function () {
       })
     })
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 
@@ -80,7 +80,7 @@ describe(`Registration`, function () {
   it(`should execute the lobby change callback when other player chooses rol`, async function () {
     await client.createLobby(`myLobby`)
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 
@@ -96,5 +96,20 @@ describe(`Registration`, function () {
     expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan` }] })
 
     await eventCalled
+  })
+
+  it(`should allow to start the game`, async function () {
+    await client.createLobby(`myLobby`)
+
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    await otherClient.register(`rataplan`)
+    await otherClient.joinLobby(`myLobby`)
+
+    await client.chooseRol(`w`)
+    await otherClient.chooseRol(`b`)
+
+    const result = await client.startGame()
+
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b` }] })
   })
 })
