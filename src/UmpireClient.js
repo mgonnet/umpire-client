@@ -40,7 +40,7 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
 
   /**
    * Add a function that will be executed each time that
-   * a someone joins, 
+   * a someone joins,
    *
    * @param {WebSocket} ws
    * @param {Function} callback
@@ -55,9 +55,10 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
   }
 
   /**
-   * Mantain the lobbyInfo with the updates originated when 
-   * a player joins, 
-   * @param {WebSocket} ws 
+   * Mantain the lobbyInfo with the updates originated when
+   * a player joins,
+   *
+   * @param {WebSocket} ws
    */
   function onEventUpdateLobbyInfo (ws) {
     ws.addEventListener(`message`, ({ data }) => {
@@ -130,6 +131,15 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
         lobbyName = name
         lobbyInfo = info
         onEventUpdateLobbyInfo(ws)
+        return lobbyInfo
+      })
+    },
+
+    chooseRol (rol) {
+      ws.send(JSON.stringify([MessageTypes.CHOOSE_ROL, { rol }]))
+      return onresponse(ws, MessageTypes.CHOOSE_ROL).then(({ name, rol }) => {
+        const playerInfo = lobbyInfo.players.find((player) => player.name === name)
+        playerInfo.rol = rol
         return lobbyInfo
       })
     },

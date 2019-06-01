@@ -69,4 +69,11 @@ describe(`Registration`, function () {
 
     await eventCalled
   })
+
+  it(`should allow a player to choose a rol`, async function () {
+    await client.createLobby(`myLobby`)
+    const result = await client.chooseRol(`w`)
+
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }] })
+  })
 })

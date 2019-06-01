@@ -14,7 +14,6 @@ rules:
     - backtick
   max-depth: warn
   prefer-const: error
-  no-shadow: error
   jsdoc/check-alignment: error
   jsdoc/check-indentation: error
   jsdoc/check-param-names: error
