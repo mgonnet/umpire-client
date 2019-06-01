@@ -149,7 +149,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
      * Executes callback each time that the lobby info
      * is updated
      *
-     * @param {"LOBBY-UPDATE"} event
+     * @param {"LOBBY-UPDATE" | "GAME-START"} event
      * @param {Function} callback
      */
     addEventListener (event, callback) {
@@ -159,6 +159,12 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
           case MessageTypes.JOINED_LOBBY:
           case MessageTypes.CHOOSED_ROL:
             if (event === `LOBBY-UPDATE`) {
+              callback(lobbyInfo)
+            }
+            break
+
+          case MessageTypes.GAME_STARTED:
+            if (event === `GAME-START`) {
               callback(lobbyInfo)
             }
             break

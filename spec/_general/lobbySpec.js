@@ -112,4 +112,26 @@ describe(`Registration`, function () {
 
     expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b` }] })
   })
+
+  it(`should execute the callback when the creator starts the game`, async function () {
+    await client.createLobby(`myLobby`)
+
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    await otherClient.register(`rataplan`)
+    await otherClient.joinLobby(`myLobby`)
+
+    await client.chooseRol(`w`)
+    await otherClient.chooseRol(`b`)
+
+    const eventCalled = new Promise(function (resolve, reject) {
+      otherClient.addEventListener(`GAME-START`, (info) => {
+        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b` }] })
+        resolve()
+      })
+    })
+
+    await client.startGame()
+
+    await eventCalled
+  })
 })
