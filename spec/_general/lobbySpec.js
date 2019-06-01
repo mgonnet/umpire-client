@@ -76,4 +76,25 @@ describe(`Registration`, function () {
 
     expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }] })
   })
+
+  it(`should execute the lobby change callback when other player chooses rol`, async function () {
+    await client.createLobby(`myLobby`)
+
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
+    await otherClient.register(`rataplan`)
+    await otherClient.joinLobby(`myLobby`)
+
+    const eventCalled = new Promise(function (resolve, reject) {
+      otherClient.addLobbyUpdateListener((info) => {
+        expect(info).toEqual({ players: [{ "name": `useloom`, rol: `w` }, { "name": `rataplan` }] })
+        resolve()
+      })
+    })
+
+    const result = await client.chooseRol(`w`)
+
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan` }] })
+
+    await eventCalled
+  })
 })
