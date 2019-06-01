@@ -38,13 +38,40 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
     })
   }
 
+  /**
+   * Add a function that will be executed each time that
+   * a someone joins, changes rol
+   *
+   * @param {WebSocket} ws
+   * @param {Function} callback
+   */
+  function addLobbyUpdateListener (ws, callback) {
+    ws.addEventListener(`message`, ({ data }) => {
+      const { type } = parseMessage(data)
+      if (type === `JOINED-LOBBY`) {
+        console.log(`***`, lobbyInfo)
+        callback(lobbyInfo)
+      }
+    })
+  }
+
+  function onEventUpdateLobbyInfo (ws) {
+    ws.addEventListener(`message`, ({ data }) => {
+      const { type, payload } = parseMessage(data)
+      if (type === `JOINED-LOBBY`) {
+        lobbyInfo.players.push(payload)
+        console.log(`**`, lobbyInfo)
+      }
+    })
+  }
+
   /** @type {WebSocket} */
   let ws
 
   let userName
   let lobbyName
 
-  // let lobbyInfo
+  let lobbyInfo = { }
 
   return {
 
@@ -86,34 +113,32 @@ const UmpireClientFactory = ({ url, WSConstructor }) => {
      */
     createLobby (name) {
       ws.send(JSON.stringify([MessageTypes.CREATE_LOBBY, { name }]))
-      return onresponse(ws, MessageTypes.CREATE_LOBBY).then(({ players }) => {
+      return onresponse(ws, MessageTypes.CREATE_LOBBY).then((info) => {
         lobbyName = name
-        // lobbyInfo = players
-        return players
+        lobbyInfo = info
+        onEventUpdateLobbyInfo(ws)
+        return lobbyInfo
       })
     },
 
     joinLobby (name) {
       ws.send(JSON.stringify([MessageTypes.JOIN_LOBBY, { name }]))
-      return onresponse(ws, MessageTypes.JOIN_LOBBY).then(({ players }) => {
+      return onresponse(ws, MessageTypes.JOIN_LOBBY).then((info) => {
         lobbyName = name
-        return players
+        lobbyInfo = info
+        onEventUpdateLobbyInfo(ws)
+        return lobbyInfo
       })
     },
 
     /**
-     * Executes callback each time that the event is fired
+     * Executes callback each time that the lobby info
+     * is updated
      *
-     * @param {"JOINED-LOBBY"} event
      * @param {Function} callback
      */
-    addListener (event, callback) {
-      ws.addEventListener(`message`, ({ data }) => {
-        const { type, payload } = parseMessage(data)
-        if (event === type) {
-          callback(payload)
-        }
-      })
+    addLobbyUpdateListener (callback) {
+      addLobbyUpdateListener(ws, callback)
     }
   }
 }

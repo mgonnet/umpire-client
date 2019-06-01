@@ -25,12 +25,12 @@ describe(`Registration`, function () {
   it(`should allow to create a lobby`, async function () {
     const result = await client.createLobby(`myLobby`)
 
-    expect(result).toEqual([{ name: `useloom` }])
+    expect(result).toEqual({ players: [{ name: `useloom` }] })
   })
 
   it(`should reject with a reason when the server rejects a lobby creation`, async function () {
     const result = await client.createLobby(`myLobby`)
-    expect(result).toEqual([{ name: `useloom` }])
+    expect(result).toEqual({ players: [{ name: `useloom` }] })
 
     let secondResult
     try {
@@ -48,21 +48,21 @@ describe(`Registration`, function () {
 
     const result = await otherClient.joinLobby(`myLobby`)
 
-    const resultString = JSON.stringify(result)
-    const expectedPlayers = `[{"name":"useloom"},{"name":"rataplan"}]`
+    const expectedPlayers = { players: [{ "name": `useloom` }, { "name": `rataplan` }] }
 
-    expect(resultString).toBe(expectedPlayers)
+    expect(result).toEqual(expectedPlayers)
   })
 
   it(`should execute the function setted on onJoinedLobby`, async function () {
+    await client.createLobby(`myLobby`)
+
     const eventCalled = new Promise(function (resolve, reject) {
-      client.addListener(`JOINED-LOBBY`, ({ player }) => {
-        expect(player).toBe(`rataplan`)
+      client.addLobbyUpdateListener((info) => {
+        expect(info).toEqual({ players: [{ "name": `useloom` }, { "name": `rataplan` }] })
         resolve()
       })
     })
 
-    await client.createLobby(`myLobby`)
     const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
