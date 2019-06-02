@@ -25,12 +25,12 @@ describe(`Registration`, function () {
   it(`should allow to create a lobby`, async function () {
     const result = await client.createLobby(`myLobby`)
 
-    expect(result).toEqual({ players: [{ name: `useloom` }], creator: `useloom` })
+    expect(result).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
   })
 
   it(`should reject with a reason when the server rejects a lobby creation`, async function () {
     const result = await client.createLobby(`myLobby`)
-    expect(result).toEqual({ players: [{ name: `useloom` }], creator: `useloom` })
+    expect(result).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
 
     let secondResult
     try {
@@ -48,7 +48,7 @@ describe(`Registration`, function () {
 
     const result = await otherClient.joinLobby(`myLobby`)
 
-    const expectedPlayers = { players: [{ "name": `useloom` }, { "name": `rataplan` }], creator: `useloom` }
+    const expectedPlayers = { players: [{ "name": `useloom` }, { "name": `rataplan`, me: true }], creator: `useloom` }
 
     expect(result).toEqual(expectedPlayers)
   })
@@ -58,7 +58,7 @@ describe(`Registration`, function () {
 
     const eventCalled = new Promise(function (resolve, reject) {
       client.addEventListener(`LOBBY-UPDATE`, (info) => {
-        expect(info).toEqual({ players: [{ "name": `useloom` }, { "name": `rataplan` }], creator: `useloom` })
+        expect(info).toEqual({ players: [{ "name": `useloom`, me: true }, { "name": `rataplan` }], creator: `useloom` })
         resolve()
       })
     })
@@ -74,7 +74,7 @@ describe(`Registration`, function () {
     await client.createLobby(`myLobby`)
     const result = await client.chooseRol(`w`)
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }], creator: `useloom` })
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }], creator: `useloom` })
   })
 
   it(`should execute the lobby change callback when other player chooses rol`, async function () {
@@ -86,14 +86,14 @@ describe(`Registration`, function () {
 
     const eventCalled = new Promise(function (resolve, reject) {
       otherClient.addEventListener(`LOBBY-UPDATE`, (info) => {
-        expect(info).toEqual({ players: [{ "name": `useloom`, rol: `w` }, { "name": `rataplan` }], creator: `useloom` })
+        expect(info).toEqual({ players: [{ "name": `useloom`, rol: `w` }, { "name": `rataplan`, me: true }], creator: `useloom` })
         resolve()
       })
     })
 
     const result = await client.chooseRol(`w`)
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan` }], creator: `useloom` })
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan` }], creator: `useloom` })
 
     await eventCalled
   })
@@ -110,7 +110,7 @@ describe(`Registration`, function () {
 
     const result = await client.startGame()
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b` }], creator: `useloom` })
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom` })
   })
 
   it(`should execute the callback when the creator starts the game`, async function () {
@@ -125,7 +125,7 @@ describe(`Registration`, function () {
 
     const eventCalled = new Promise(function (resolve, reject) {
       otherClient.addEventListener(`GAME-START`, (info) => {
-        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b` }], creator: `useloom` })
+        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b`, me: true }], creator: `useloom` })
         resolve()
       })
     })

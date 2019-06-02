@@ -111,6 +111,11 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.CREATE_LOBBY).then((info) => {
         lobbyName = name
         lobbyInfo = info
+        lobbyInfo.players.forEach((player) => {
+          if (player.name === userName) {
+            player.me = true
+          }
+        })
         onEventUpdateLobbyInfo(ws)
         return lobbyInfo
       })
@@ -121,6 +126,11 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.JOIN_LOBBY).then((info) => {
         lobbyName = name
         lobbyInfo = info
+        lobbyInfo.players.forEach((player) => {
+          if (player.name === userName) {
+            player.me = true
+          }
+        })
         onEventUpdateLobbyInfo(ws)
         return lobbyInfo
       })
