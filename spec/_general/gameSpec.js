@@ -21,7 +21,7 @@ describe(`Game`, function () {
     await otherClient.register(`rataplan`)
 
     await client.createLobby(`lobby`)
-    await otherClient.createLobby(`lobby2`)
+    await otherClient.joinLobby(`lobby`)
     await client.chooseRol(`w`)
     await otherClient.chooseRol(`b`)
 
@@ -39,5 +39,20 @@ describe(`Game`, function () {
     expectedGame.move(`e4`)
 
     expect(game.ascii()).toBe(expectedGame.ascii())
+  })
+
+  it(`should execute the callback when the other player moves`, async function () {
+    const notified = new Promise(function (resolve, reject) {
+      otherClient.addEventListener(`MOVE`, (game) => {
+        const expectedGame = new Chess()
+        expectedGame.move(`e4`)
+        expect(game.ascii()).toBe(expectedGame.ascii())
+        resolve()
+      })
+    })
+
+    await client.move(`e4`)
+
+    await notified
   })
 })

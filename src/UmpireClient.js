@@ -45,7 +45,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
    *
    * @param {WebSocket} ws
    */
-  function onEventUpdateLobbyInfo (ws) {
+  function onServerEvent (ws) {
     ws.addEventListener(`message`, ({ data }) => {
       const { type, payload } = parseMessage(data)
       if (type === `JOINED-LOBBY`) {
@@ -53,6 +53,10 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       } else if (type === MessageTypes.CHOOSED_ROL) {
         const playerInfo = lobbyInfo.players.find((player) => player.name === payload.name)
         playerInfo.rol = payload.rol
+      } else if (type === MessageTypes.GAME_STARTED) {
+        game = new Game()
+      } else if (type === MessageTypes.MOVED) {
+        game.move(payload.move)
       }
     })
   }
@@ -116,7 +120,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
             player.me = true
           }
         })
-        onEventUpdateLobbyInfo(ws)
+        onServerEvent(ws)
         return lobbyInfo
       })
     },
@@ -131,7 +135,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
             player.me = true
           }
         })
-        onEventUpdateLobbyInfo(ws)
+        onServerEvent(ws)
         return lobbyInfo
       })
     },
@@ -170,7 +174,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
      * Executes callback each time that the lobby info
      * is updated
      *
-     * @param {"LOBBY-UPDATE" | "GAME-START"} event
+     * @param {"LOBBY-UPDATE" | "GAME-START" | "MOVE"} event
      * @param {Function} callback
      */
     addEventListener (event, callback) {
@@ -187,6 +191,12 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
           case MessageTypes.GAME_STARTED:
             if (event === `GAME-START`) {
               callback(lobbyInfo)
+            }
+            break
+
+          case MessageTypes.MOVED:
+            if (event === `MOVE`) {
+              callback(game)
             }
             break
 
