@@ -150,8 +150,19 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.START_GAME).then((serversInfo) => {
         // I should validate here that my info is the same that the info in the server
         game = new Game()
-        console.log(game)
         return lobbyInfo
+      })
+    },
+
+    /**
+     *
+     * @param {string} move
+     */
+    move (move) {
+      ws.send(JSON.stringify([MessageTypes.MOVE, { move }]))
+      return onresponse(ws, MessageTypes.MOVE).then((response) => {
+        game.move(move)
+        return game
       })
     },
 
