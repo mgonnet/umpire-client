@@ -6,6 +6,15 @@ const WebSocket = require(`ws`)
 const PORT = 3000
 const URL = `ws://localhost:${PORT}`
 
+const FakeChess = new Proxy(Chess, {
+  construct: function (Target, args) {
+    const myFake = new Target(...args)
+    // @ts-ignore
+    myFake.state = () => myFake.ascii()
+    return myFake
+  }
+})
+
 describe(`Registration`, function () {
   let server
   let client
@@ -14,7 +23,7 @@ describe(`Registration`, function () {
     spyOn(console, `log`)
     server = Umpire({ port: PORT, game: Chess })
     await server.start()
-    client = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    client = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: FakeChess })
     await client.register(`useloom`)
   })
 
@@ -63,7 +72,7 @@ describe(`Registration`, function () {
       })
     })
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: FakeChess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 
@@ -80,7 +89,7 @@ describe(`Registration`, function () {
   it(`should execute the lobby change callback when other player chooses rol`, async function () {
     await client.createLobby(`myLobby`)
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: FakeChess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 
@@ -101,7 +110,7 @@ describe(`Registration`, function () {
   it(`should allow to start the game`, async function () {
     await client.createLobby(`myLobby`)
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: FakeChess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 
@@ -110,13 +119,14 @@ describe(`Registration`, function () {
 
     const result = await client.startGame()
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom` })
+    // @ts-ignore
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom`, gameState: new FakeChess().state() })
   })
 
   it(`should execute the callback when the creator starts the game`, async function () {
     await client.createLobby(`myLobby`)
 
-    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
+    const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: FakeChess })
     await otherClient.register(`rataplan`)
     await otherClient.joinLobby(`myLobby`)
 

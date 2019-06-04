@@ -154,6 +154,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.START_GAME).then((serversInfo) => {
         // I should validate here that my info is the same that the info in the server
         game = new Game()
+        lobbyInfo.gameState = game.state()
         return lobbyInfo
       })
     },
