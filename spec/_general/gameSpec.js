@@ -42,20 +42,20 @@ describe(`Game`, function () {
   })
 
   it(`should allow a player to move`, async function () {
-    const game = await client.move(`e4`)
+    const lobbyInfo = await client.move(`e4`)
 
     const expectedGame = new Chess()
     expectedGame.move(`e4`)
 
-    expect(game.ascii()).toBe(expectedGame.ascii())
+    expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
   })
 
   it(`should execute the callback when the other player moves`, async function () {
     const notified = new Promise(function (resolve, reject) {
-      otherClient.addEventListener(`MOVE`, (game) => {
+      otherClient.addEventListener(`MOVE`, (lobbyInfo) => {
         const expectedGame = new FakeChess()
         expectedGame.move(`e4`)
-        expect(game.ascii()).toBe(expectedGame.ascii())
+        expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
         resolve()
       })
     })

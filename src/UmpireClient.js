@@ -57,6 +57,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         game = new Game()
       } else if (type === MessageTypes.MOVED) {
         game.move(payload.move)
+        lobbyInfo.gameState = game.state()
       }
     })
   }
@@ -167,7 +168,8 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       ws.send(JSON.stringify([MessageTypes.MOVE, { move }]))
       return onresponse(ws, MessageTypes.MOVE).then((response) => {
         game.move(move)
-        return game
+        lobbyInfo.gameState = game.state()
+        return lobbyInfo
       })
     },
 
@@ -197,7 +199,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
 
           case MessageTypes.MOVED:
             if (event === `MOVE`) {
-              callback(game)
+              callback(lobbyInfo)
             }
             break
 
