@@ -55,6 +55,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         playerInfo.rol = payload.rol
       } else if (type === MessageTypes.GAME_STARTED) {
         game = new Game()
+        lobbyInfo.gameState = game.state()
       } else if (type === MessageTypes.MOVED) {
         game.move(payload.move)
         lobbyInfo.gameState = game.state()
