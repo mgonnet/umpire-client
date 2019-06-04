@@ -135,7 +135,8 @@ describe(`Registration`, function () {
 
     const eventCalled = new Promise(function (resolve, reject) {
       otherClient.addEventListener(`GAME-START`, (info) => {
-        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b`, me: true }], creator: `useloom` })
+        // @ts-ignore
+        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b`, me: true }], creator: `useloom`, gameState: new FakeChess().state() })
         resolve()
       })
     })
