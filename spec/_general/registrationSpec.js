@@ -39,4 +39,11 @@ describe(`Registration`, function () {
     }
     expect(secondResult).toBe(`User name taken - useloom`)
   })
+
+  it(`should allow to leave the server`, async function () {
+    await client.register(`useloom`)
+    const result = await client.leave()
+
+    expect(result).toBe(`OK`)
+  })
 })

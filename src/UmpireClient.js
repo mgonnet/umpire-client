@@ -110,6 +110,21 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
 
     /**
      *
+     */
+    leave () {
+      ws.send(JSON.stringify([MessageTypes.LEAVE_SERVER]))
+      return onresponse(ws, MessageTypes.LEAVE_SERVER).then(() => {
+        ws.close()
+        userName = null
+        lobbyName = null
+        lobbyInfo = null
+        game = null
+        return `OK`
+      })
+    },
+
+    /**
+     *
      * @param {string} name
      */
     createLobby (name) {
