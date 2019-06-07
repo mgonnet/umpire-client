@@ -56,8 +56,10 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       } else if (type === MessageTypes.GAME_STARTED) {
         game = new Game()
         lobbyInfo.gameState = game.state()
+        lobbyInfo.turn = payload.turn
       } else if (type === MessageTypes.MOVED) {
         game.move(payload.move)
+        lobbyInfo.turn = payload.turn
         lobbyInfo.gameState = game.state()
       }
     })
@@ -172,6 +174,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         // I should validate here that my info is the same that the info in the server
         game = new Game()
         lobbyInfo.gameState = game.state()
+        lobbyInfo.turn = serversInfo.turn
         return lobbyInfo
       })
     },
@@ -185,6 +188,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.MOVE).then((response) => {
         game.move(move)
         lobbyInfo.gameState = game.state()
+        lobbyInfo.turn = response.turn
         return lobbyInfo
       })
     },
