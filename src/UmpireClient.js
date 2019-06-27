@@ -48,7 +48,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
   function onServerEvent (ws) {
     ws.addEventListener(`message`, ({ data }) => {
       const { type, payload } = parseMessage(data)
-      if (type === `JOINED-LOBBY`) {
+      if (type === MessageTypes.JOINED_LOBBY) {
         lobbyInfo.players.push(payload)
       } else if (type === MessageTypes.CHOOSED_ROL) {
         const playerInfo = lobbyInfo.players.find((player) => player.name === payload.name)
