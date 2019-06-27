@@ -120,7 +120,7 @@ describe(`Registration`, function () {
     const result = await client.startGame()
 
     // @ts-ignore
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom`, gameState: new FakeChess().state(), turn: `w` })
+    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom`, gameState: new FakeChess().state(), turn: `w`, myTurn: true, moves: new FakeChess().moves() })
   })
 
   it(`should execute the callback when the creator starts the game`, async function () {

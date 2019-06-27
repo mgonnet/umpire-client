@@ -48,6 +48,8 @@ describe(`Game`, function () {
     expectedGame.move(`e4`)
 
     expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
+    expect(lobbyInfo.moves).toEqual([])
+    expect(lobbyInfo.myTurn).toBe(false)
   })
 
   it(`should execute the callback when the other player moves`, async function () {
@@ -56,6 +58,8 @@ describe(`Game`, function () {
         const expectedGame = new FakeChess()
         expectedGame.move(`e4`)
         expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
+        expect(lobbyInfo.moves).toEqual(expectedGame.moves())
+        expect(lobbyInfo.myTurn).toEqual(true)
         resolve()
       })
     })

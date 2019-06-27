@@ -61,8 +61,20 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         game.move(payload.move)
         lobbyInfo.turn = payload.turn
         lobbyInfo.gameState = game.state()
+        refreshMoves()
       }
     })
+  }
+
+  function refreshMoves () {
+    const playerInfo = lobbyInfo.players.find((player) => player.name === userName)
+    if (playerInfo.rol === lobbyInfo.turn) {
+      lobbyInfo.myTurn = true
+      lobbyInfo.moves = game.moves()
+    } else {
+      lobbyInfo.myTurn = false
+      lobbyInfo.moves = []
+    }
   }
 
   /** @type {WebSocket} */
@@ -175,6 +187,8 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         game = new Game()
         lobbyInfo.gameState = game.state()
         lobbyInfo.turn = serversInfo.turn
+        refreshMoves()
+
         return lobbyInfo
       })
     },
@@ -189,6 +203,8 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         game.move(move)
         lobbyInfo.gameState = game.state()
         lobbyInfo.turn = response.turn
+        refreshMoves()
+
         return lobbyInfo
       })
     },
