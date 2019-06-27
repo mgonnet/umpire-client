@@ -119,8 +119,9 @@ describe(`Registration`, function () {
 
     const result = await client.startGame()
 
+    expect(result.lobbyInfo).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom` })
     // @ts-ignore
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan`, rol: `b` }], creator: `useloom`, gameState: new FakeChess().state(), turn: `w`, myTurn: true, moves: new FakeChess().moves() })
+    expect(result.gameInfo).toEqual({ gameState: new FakeChess().state(), turn: `w`, myTurn: true, moves: new FakeChess().moves() })
   })
 
   it(`should execute the callback when the creator starts the game`, async function () {
@@ -135,8 +136,9 @@ describe(`Registration`, function () {
 
     const eventCalled = new Promise(function (resolve, reject) {
       otherClient.addEventListener(`GAME-START`, (info) => {
+        expect(info.lobbyInfo).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b`, me: true }], creator: `useloom` })
         // @ts-ignore
-        expect(info).toEqual({ players: [{ name: `useloom`, rol: `w` }, { name: `rataplan`, rol: `b`, me: true }], creator: `useloom`, gameState: new FakeChess().state(), turn: `w` })
+        expect(info.gameInfo).toEqual({ gameState: new FakeChess().state(), turn: `w` })
         resolve()
       })
     })

@@ -42,24 +42,24 @@ describe(`Game`, function () {
   })
 
   it(`should allow a player to move`, async function () {
-    const lobbyInfo = await client.move(`e4`)
+    const gameInfo = await client.move(`e4`)
 
     const expectedGame = new Chess()
     expectedGame.move(`e4`)
 
-    expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
-    expect(lobbyInfo.moves).toEqual([])
-    expect(lobbyInfo.myTurn).toBe(false)
+    expect(gameInfo.gameState).toBe(expectedGame.ascii())
+    expect(gameInfo.moves).toEqual([])
+    expect(gameInfo.myTurn).toBe(false)
   })
 
   it(`should execute the callback when the other player moves`, async function () {
     const notified = new Promise(function (resolve, reject) {
-      otherClient.addEventListener(`MOVE`, (lobbyInfo) => {
+      otherClient.addEventListener(`MOVE`, (gameInfo) => {
         const expectedGame = new FakeChess()
         expectedGame.move(`e4`)
-        expect(lobbyInfo.gameState).toBe(expectedGame.ascii())
-        expect(lobbyInfo.moves).toEqual(expectedGame.moves())
-        expect(lobbyInfo.myTurn).toEqual(true)
+        expect(gameInfo.gameState).toBe(expectedGame.ascii())
+        expect(gameInfo.moves).toEqual(expectedGame.moves())
+        expect(gameInfo.myTurn).toEqual(true)
         resolve()
       })
     })

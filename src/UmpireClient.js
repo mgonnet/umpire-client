@@ -55,12 +55,13 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         playerInfo.rol = payload.rol
       } else if (type === MessageTypes.GAME_STARTED) {
         game = new Game()
-        lobbyInfo.gameState = game.state()
-        lobbyInfo.turn = payload.turn
+        gameInfo = { }
+        gameInfo.gameState = game.state()
+        gameInfo.turn = payload.turn
       } else if (type === MessageTypes.MOVED) {
         game.move(payload.move)
-        lobbyInfo.turn = payload.turn
-        lobbyInfo.gameState = game.state()
+        gameInfo.turn = payload.turn
+        gameInfo.gameState = game.state()
         refreshMoves()
       }
     })
@@ -68,12 +69,12 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
 
   function refreshMoves () {
     const playerInfo = lobbyInfo.players.find((player) => player.name === userName)
-    if (playerInfo.rol === lobbyInfo.turn) {
-      lobbyInfo.myTurn = true
-      lobbyInfo.moves = game.moves()
+    if (playerInfo.rol === gameInfo.turn) {
+      gameInfo.myTurn = true
+      gameInfo.moves = game.moves()
     } else {
-      lobbyInfo.myTurn = false
-      lobbyInfo.moves = []
+      gameInfo.myTurn = false
+      gameInfo.moves = []
     }
   }
 
@@ -87,6 +88,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
   let game
 
   let lobbyInfo = { }
+  let gameInfo = { }
 
   return {
 
@@ -185,11 +187,12 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.START_GAME).then((serversInfo) => {
         // I should validate here that my info is the same that the info in the server
         game = new Game()
-        lobbyInfo.gameState = game.state()
-        lobbyInfo.turn = serversInfo.turn
+        gameInfo = { }
+        gameInfo.gameState = game.state()
+        gameInfo.turn = serversInfo.turn
         refreshMoves()
 
-        return lobbyInfo
+        return { lobbyInfo, gameInfo }
       })
     },
 
@@ -201,11 +204,11 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       ws.send(JSON.stringify([MessageTypes.MOVE, { move }]))
       return onresponse(ws, MessageTypes.MOVE).then((response) => {
         game.move(move)
-        lobbyInfo.gameState = game.state()
-        lobbyInfo.turn = response.turn
+        gameInfo.gameState = game.state()
+        gameInfo.turn = response.turn
         refreshMoves()
 
-        return lobbyInfo
+        return gameInfo
       })
     },
 
@@ -214,28 +217,28 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
      * is updated
      *
      * @param {"LOBBY-UPDATE" | "GAME-START" | "MOVE"} event
-     * @param {Function} callback
+     * @param {Function} myCallback
      */
-    addEventListener (event, callback) {
+    addEventListener (event, myCallback) {
       ws.addEventListener(`message`, ({ data }) => {
         const { type } = parseMessage(data)
         switch (type) {
           case MessageTypes.JOINED_LOBBY:
           case MessageTypes.CHOOSED_ROL:
             if (event === `LOBBY-UPDATE`) {
-              callback(lobbyInfo)
+              myCallback(lobbyInfo)
             }
             break
 
           case MessageTypes.GAME_STARTED:
             if (event === `GAME-START`) {
-              callback(lobbyInfo)
+              myCallback({ lobbyInfo, gameInfo })
             }
             break
 
           case MessageTypes.MOVED:
             if (event === `MOVE`) {
-              callback(lobbyInfo)
+              myCallback(gameInfo)
             }
             break
 
