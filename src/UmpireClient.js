@@ -40,7 +40,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
   }
 
   /**
-   * Mantain the lobbyInfo with the updates originated when
+   * Mantain the lobbyInfo and game with the updates originated when
    * a player joins, chooses rol,
    *
    * @param {WebSocket} ws
@@ -56,18 +56,17 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       } else if (type === MessageTypes.GAME_STARTED) {
         game = new Game()
         gameInfo = { }
-        gameInfo.gameState = game.state()
-        gameInfo.turn = payload.turn
+        updateGameInfo()
       } else if (type === MessageTypes.MOVED) {
         game.move(payload.move)
-        gameInfo.turn = payload.turn
-        gameInfo.gameState = game.state()
-        refreshMoves()
+        updateGameInfo()
       }
     })
   }
 
-  function refreshMoves () {
+  function updateGameInfo () {
+    gameInfo.turn = game.turn()
+    gameInfo.gameState = game.state()
     const playerInfo = lobbyInfo.players.find((player) => player.name === userName)
     if (playerInfo.rol === gameInfo.turn) {
       gameInfo.myTurn = true
@@ -188,9 +187,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         // I should validate here that my info is the same that the info in the server
         game = new Game()
         gameInfo = { }
-        gameInfo.gameState = game.state()
-        gameInfo.turn = serversInfo.turn
-        refreshMoves()
+        updateGameInfo()
 
         return { lobbyInfo, gameInfo }
       })
@@ -204,9 +201,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       ws.send(JSON.stringify([MessageTypes.MOVE, { move }]))
       return onresponse(ws, MessageTypes.MOVE).then((response) => {
         game.move(move)
-        gameInfo.gameState = game.state()
-        gameInfo.turn = response.turn
-        refreshMoves()
+        updateGameInfo()
 
         return gameInfo
       })
