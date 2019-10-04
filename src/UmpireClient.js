@@ -208,6 +208,14 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
     },
 
     /**
+     *
+     * @param {*} options
+     */
+    moves (options) {
+      return game.moves(options)
+    },
+
+    /**
      * Executes callback each time that the lobby info
      * is updated
      *

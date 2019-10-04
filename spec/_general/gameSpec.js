@@ -68,4 +68,10 @@ describe(`Game`, function () {
 
     await notified
   })
+
+  it(`should show the correct moves for a position`, async function () {
+    const moves = client.moves({ square: `a2` })
+
+    expect(moves).toEqual([`a3`, `a4`])
+  })
 })
