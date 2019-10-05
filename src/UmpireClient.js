@@ -153,7 +153,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
           }
         })
         onServerEvent(ws)
-        return lobbyInfo
+        return { lobbyInfo }
       })
     },
 
@@ -168,7 +168,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
           }
         })
         onServerEvent(ws)
-        return lobbyInfo
+        return { lobbyInfo }
       })
     },
 
@@ -177,7 +177,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
       return onresponse(ws, MessageTypes.CHOOSE_ROL).then(({ name, rol }) => {
         const playerInfo = lobbyInfo.players.find((player) => player.name === name)
         playerInfo.rol = rol
-        return lobbyInfo
+        return { lobbyInfo }
       })
     },
 
@@ -203,7 +203,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
         game.move(move)
         updateGameInfo()
 
-        return gameInfo
+        return { gameInfo }
       })
     },
 
@@ -212,7 +212,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
      * @param {*} options
      */
     moves (options) {
-      return game.moves(options)
+      return { moves: game.moves(options) }
     },
 
     /**

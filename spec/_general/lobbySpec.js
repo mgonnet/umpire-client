@@ -32,14 +32,14 @@ describe(`Registration`, function () {
   })
 
   it(`should allow to create a lobby`, async function () {
-    const result = await client.createLobby(`myLobby`)
+    const { lobbyInfo } = await client.createLobby(`myLobby`)
 
-    expect(result).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
+    expect(lobbyInfo).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
   })
 
   it(`should reject with a reason when the server rejects a lobby creation`, async function () {
-    const result = await client.createLobby(`myLobby`)
-    expect(result).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
+    const { lobbyInfo } = await client.createLobby(`myLobby`)
+    expect(lobbyInfo).toEqual({ players: [{ name: `useloom`, me: true }], creator: `useloom` })
 
     let secondResult
     try {
@@ -55,11 +55,11 @@ describe(`Registration`, function () {
     const otherClient = UmpireClient({ url: URL, WSConstructor: WebSocket, Game: Chess })
     await otherClient.register(`rataplan`)
 
-    const result = await otherClient.joinLobby(`myLobby`)
+    const { lobbyInfo } = await otherClient.joinLobby(`myLobby`)
 
     const expectedPlayers = { players: [{ "name": `useloom` }, { "name": `rataplan`, me: true }], creator: `useloom` }
 
-    expect(result).toEqual(expectedPlayers)
+    expect(lobbyInfo).toEqual(expectedPlayers)
   })
 
   it(`should execute the function setted on onJoinedLobby`, async function () {
@@ -81,9 +81,9 @@ describe(`Registration`, function () {
 
   it(`should allow a player to choose a rol`, async function () {
     await client.createLobby(`myLobby`)
-    const result = await client.chooseRol(`w`)
+    const { lobbyInfo } = await client.chooseRol(`w`)
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }], creator: `useloom` })
+    expect(lobbyInfo).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }], creator: `useloom` })
   })
 
   it(`should execute the lobby change callback when other player chooses rol`, async function () {
@@ -100,9 +100,9 @@ describe(`Registration`, function () {
       })
     })
 
-    const result = await client.chooseRol(`w`)
+    const { lobbyInfo } = await client.chooseRol(`w`)
 
-    expect(result).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan` }], creator: `useloom` })
+    expect(lobbyInfo).toEqual({ players: [{ name: `useloom`, rol: `w`, me: true }, { name: `rataplan` }], creator: `useloom` })
 
     await eventCalled
   })

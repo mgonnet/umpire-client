@@ -42,7 +42,7 @@ describe(`Game`, function () {
   })
 
   it(`should allow a player to move`, async function () {
-    const gameInfo = await client.move(`e4`)
+    const { gameInfo } = await client.move(`e4`)
 
     const expectedGame = new Chess()
     expectedGame.move(`e4`)
@@ -70,7 +70,7 @@ describe(`Game`, function () {
   })
 
   it(`should show the correct moves for a position`, async function () {
-    const moves = client.moves({ square: `a2` })
+    const { moves } = client.moves({ square: `a2` })
 
     expect(moves).toEqual([`a3`, `a4`])
   })

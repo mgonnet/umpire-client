@@ -1,7 +1,7 @@
 {
   "name": "@mgonnet/umpire-client",
   "description": "umpire client for JS",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "./src/UmpireClient",
   "scripts": {
     "lint": "esw \"**/*.js\"",
