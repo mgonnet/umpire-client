@@ -54,7 +54,7 @@ describe(`Game`, function () {
 
   it(`should execute the callback when the other player moves`, async function () {
     const notified = new Promise(function (resolve, reject) {
-      otherClient.addEventListener(`MOVE`, (gameInfo) => {
+      otherClient.addEventListener(`MOVE`, ({ gameInfo }) => {
         const expectedGame = new FakeChess()
         expectedGame.move(`e4`)
         expect(gameInfo.gameState).toBe(expectedGame.ascii())

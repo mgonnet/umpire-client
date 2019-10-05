@@ -66,8 +66,8 @@ describe(`Registration`, function () {
     await client.createLobby(`myLobby`)
 
     const eventCalled = new Promise(function (resolve, reject) {
-      client.addEventListener(`LOBBY-UPDATE`, (info) => {
-        expect(info).toEqual({ players: [{ "name": `useloom`, me: true }, { "name": `rataplan` }], creator: `useloom` })
+      client.addEventListener(`LOBBY-UPDATE`, ({ lobbyInfo }) => {
+        expect(lobbyInfo).toEqual({ players: [{ "name": `useloom`, me: true }, { "name": `rataplan` }], creator: `useloom` })
         resolve()
       })
     })
@@ -94,8 +94,8 @@ describe(`Registration`, function () {
     await otherClient.joinLobby(`myLobby`)
 
     const eventCalled = new Promise(function (resolve, reject) {
-      otherClient.addEventListener(`LOBBY-UPDATE`, (info) => {
-        expect(info).toEqual({ players: [{ "name": `useloom`, rol: `w` }, { "name": `rataplan`, me: true }], creator: `useloom` })
+      otherClient.addEventListener(`LOBBY-UPDATE`, ({ lobbyInfo }) => {
+        expect(lobbyInfo).toEqual({ players: [{ "name": `useloom`, rol: `w` }, { "name": `rataplan`, me: true }], creator: `useloom` })
         resolve()
       })
     })

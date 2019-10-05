@@ -229,7 +229,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
           case MessageTypes.JOINED_LOBBY:
           case MessageTypes.CHOOSED_ROL:
             if (event === `LOBBY-UPDATE`) {
-              myCallback(lobbyInfo)
+              myCallback({ lobbyInfo })
             }
             break
 
@@ -241,7 +241,7 @@ const UmpireClientFactory = ({ url, WSConstructor, Game }) => {
 
           case MessageTypes.MOVED:
             if (event === `MOVE`) {
-              myCallback(gameInfo)
+              myCallback({ gameInfo })
             }
             break
 
